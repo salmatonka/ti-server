@@ -16,9 +16,5 @@ This is a website where you can get used products and sale your old products. Th
 7. react-toastify
 8. react-hook-form
 
-### In this website(TI TECH) has three login role system.. when user create a new account in this signup page there are "There are two options": Seller || Buyer || Admin
-#### Only seller can add a new product and buyer only buy a product
-##### Admin can delete an user from website
-
 -----------------------------
 **Let's shop or sale with "TI TECH"**
