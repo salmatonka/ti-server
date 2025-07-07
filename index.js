@@ -44,8 +44,8 @@ const run = async () => {
     const productCollection = client.db('ronTechUser').collection('products');
     const usersCollection = client.db('ronTechUser').collection('users');
     const cartsCollection = client.db('ronTechUser').collection('carts');
- const ordersCollection = client.db('ronTechUser').collection("orders");
- const wishlistCollection = client.db('ronTechUser').collection("wishlists");
+    const ordersCollection = client.db('ronTechUser').collection("orders");
+    const wishlistCollection = client.db('ronTechUser').collection("wishlists");
 
     // Verify Admin Middleware 
     const verifyAdmin = async (req, res, next) => {
@@ -144,24 +144,24 @@ const run = async () => {
       res.status(403).send({ accessToken: '' });
     })
 
-//new user kaj...........
+    //new user kaj...........
 
     // Creating user in dB 
-      app.get("/buyers", async(req, res) => {
-            const buyers = await ordersCollection.find({}).toArray();
-            res.send(buyers)
-        })
+    app.get("/buyers", async (req, res) => {
+      const buyers = await ordersCollection.find({}).toArray();
+      res.send(buyers)
+    })
 
     // app.post('/users', async (req, res) => {
     //   const user = req.body;
     //   const result = await usersCollection.insertOne(user);
     //   res.send(result);
     // })
- app.get('/users', async (req, res) => {
+    app.get('/users', async (req, res) => {
       const result = await usersCollection.find().toArray();
       res.send(result);
     });
-    
+
     app.get("/users", async (req, res) => {
       const role = req.query.role;
       let query = { role: role }
@@ -201,7 +201,7 @@ const run = async () => {
       res.send(result)
     })
 
-// Blue tick handling
+    // Blue tick handling
     app.put('/users', async (req, res) => {
       const id = req.query.id;
       const filter = { _id: new ObjectId(id) };
@@ -215,7 +215,7 @@ const run = async () => {
       res.send(result)
 
     })
- app.delete('/users', async (req, res) => {
+    app.delete('/users', async (req, res) => {
       const id = req.query.id;
       const query = { _id: new ObjectId(id) }
       const result = await usersCollection.deleteOne(query)
@@ -275,21 +275,21 @@ const run = async () => {
     //   res.send(result);
     // })
 
-    app.put("/users/sellers/:id", async(req, res) =>{
-            // update seller status in users collection
-            const id = req.params.id;
-            const filter = {_id: new ObjectId(id)};
-            const option = {upsert: true};
-            const updatedSeller = {$set: {isVerified: true}}
-            const result = usersCollection.updateOne(filter, updatedSeller, option);
-            res.send(result)
-            
-        })
+    app.put("/users/sellers/:id", async (req, res) => {
+      // update seller status in users collection
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const option = { upsert: true };
+      const updatedSeller = { $set: { isVerified: true } }
+      const result = usersCollection.updateOne(filter, updatedSeller, option);
+      res.send(result)
 
-        app.put("/products/sellers", async(req, res) => {
-            const result = await productCollection.updateMany({ isVerified: false }, { $set: { isVerified: true }})
-            res.send(result)
-        })
+    })
+
+    app.put("/products/sellers", async (req, res) => {
+      const result = await productCollection.updateMany({ isVerified: false }, { $set: { isVerified: true } })
+      res.send(result)
+    })
 
 
 
@@ -355,6 +355,9 @@ const run = async () => {
 
     //  edit product 
 
+
+    //  edit product 
+
     app.patch("/myProduct/:id", async (req, res) => {
       const id = req.params.id;
       const updatedData = req.body;
@@ -365,47 +368,47 @@ const run = async () => {
       res.send(result);
     });
 
-      app.get("/myOrders", async(req, res) => {
-            const email = req.query.email;
-            const orders = await ordersCollection.find({ email: email }).toArray();
-            res.send(orders)
-        })
+    app.get("/myOrders", async (req, res) => {
+      const email = req.query.email;
+      const orders = await ordersCollection.find({ email: email }).toArray();
+      res.send(orders)
+    })
 
-        app.get("/orders", async(req, res)=> {
-            const orders = await ordersCollection.find({}).toArray()
-            res.send(orders)
-        })
-        app.get("/orders/:id", async(req, res)=> {
-            const id = req.params.id;
-            const query = {_id: ObjectId(id)};
-            const order = await ordersCollection.findOne(query);
-            res.send(order)
-        })
+    app.get("/orders", async (req, res) => {
+      const orders = await ordersCollection.find({}).toArray()
+      res.send(orders)
+    })
+    app.get("/orders/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const order = await ordersCollection.findOne(query);
+      res.send(order)
+    })
 
-        app.post("/orders", async (req, res) => {
-            const order = req.body;
-            const result = await ordersCollection.insertOne(order);
-            res.send(result)
-        })
+    app.post("/orders", async (req, res) => {
+      const order = req.body;
+      const result = await ordersCollection.insertOne(order);
+      res.send(result)
+    })
 
-        app.put("/orders/:id", async(req, res) => {
-            const paidOrder = req.body
-            const id = req.params.id;
-            const filter = {_id: ObjectId(id)};
-            const option = {upsert: true}
-            const updateOrder = {
-                $set: {
-                    paid: true,
-                    transactionId: paidOrder.transactionId,
-                    oldId: paidOrder.id
-                }
-            }
+    app.put("/orders/:id", async (req, res) => {
+      const paidOrder = req.body
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const option = { upsert: true }
+      const updateOrder = {
+        $set: {
+          paid: true,
+          transactionId: paidOrder.transactionId,
+          oldId: paidOrder.id
+        }
+      }
 
-            const result = await ordersCollection.updateOne(filter, updateOrder, option);
-            res.send(result)
-        })
+      const result = await ordersCollection.updateOne(filter, updateOrder, option);
+      res.send(result)
+    })
 
-        // Deleting order 
+    // Deleting order 
     app.delete('/orders/:id', async (req, res) => {
       const id = req.params.id;
       // console.log(id);
@@ -413,17 +416,17 @@ const run = async () => {
       const result = await ordersCollection.deleteOne(filter);
       res.send(result);
     })
- app.get("/wishlist", async(req, res) => {
-            const products = await wishlistCollection.find({}).toArray();
-            res.send(products)
-        })
-        app.post("/wishlist", async(req, res) => {
-            const product = req.body;
-            const result = await wishlistCollection.insertOne(product);
-            res.send(result)
-        })
+    app.get("/wishlist", async (req, res) => {
+      const products = await wishlistCollection.find({}).toArray();
+      res.send(products)
+    })
+    app.post("/wishlist", async (req, res) => {
+      const product = req.body;
+      const result = await wishlistCollection.insertOne(product);
+      res.send(result)
+    })
 
- 
+
 
 
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
