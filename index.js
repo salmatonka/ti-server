@@ -293,8 +293,6 @@ const run = async () => {
 
 
 
-
-
     // post  cartItem
     app.post('/carts', async (req, res) => {
       const cartItem = req.body;
@@ -314,6 +312,7 @@ const run = async () => {
 
     app.delete('/carts/:id', async (req, res) => {
       const id = req.params.id;
+      console.log(id)
       const query = { _id: new ObjectId(id) }
       const result = await cartsCollection.deleteOne(query);
       res.send(result);
@@ -426,8 +425,58 @@ const run = async () => {
       res.send(result)
     })
 
+// stats or analycs
+app.get('/admin-stats', async(req,res)=>{
+  const users = await usersCollection?.estimatedDocumentCount();
+  const products = await productCollection?.estimatedDocumentCount();
+  const orders = await ordersCollection?.estimatedDocumentCount();
+  const wishlists = await wishlistCollection?.estimatedDocumentCount();
+  res.send({
+    users,products,orders,wishlists
+  })
+})
 
 
+
+
+// Get all products data from db for pagination
+app.get('/all-products', async (req, res) => {
+  const size = parseInt(req.query.size) || 10
+  const page = parseInt(req.query.page) - 1 || 0
+  const filter = req.query.filter
+  const sort = req.query.sort
+  const search = req.query.search || ''
+  // console.log(size, page)
+
+  let query = {}
+
+  if (search) {
+    query.name = { $regex: String(search), $options: 'i' }
+  }
+  if (filter) query.category = filter
+  let options = {}
+  if (sort) options = { sort: { deadline: sort === 'asc' ? 1 : -1 } }
+  const result = await productCollection
+    .find(query, options)
+    .skip(page * size)
+    .limit(size)
+    .toArray()
+
+  res.send(result)
+})
+
+// Get all products data count from db
+app.get('/products-count', async (req, res) => {
+  const filter = req.query.filter
+  const search = req.query.search
+  let query = {
+    name: { $regex: search, $options: 'i' },
+  }
+  if (filter) query.category = filter
+  const count = await productCollection.countDocuments(query)
+
+  res.send({ count })
+})
 
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
